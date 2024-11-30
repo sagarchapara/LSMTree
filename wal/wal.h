@@ -1,5 +1,6 @@
 #include <vector>
 
+//Segmented WAL
 class WriteAheadLog{
 public:
     WriteAheadLog(std::string filename);

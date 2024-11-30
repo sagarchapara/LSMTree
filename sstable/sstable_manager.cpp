@@ -5,6 +5,6 @@ sstable_manager::sstable_manager(std::string dir_path)
 {
 }
 
-sstable_manager::~sstable_manager()
+    sstable_manager::~sstable_manager()
 {
 }

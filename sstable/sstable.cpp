@@ -48,7 +48,7 @@ bool SSTable::get(const Key& key, std::shared_ptr<Value> value)
 
         index_file.read(key_data, key_size);
 
-        Key index_key = {key_size, key_data};
+        Key index_key = { key_size, key_data };
 
         if (key < index_key) {
             if (keyIndex.left == 0) {
@@ -56,13 +56,15 @@ bool SSTable::get(const Key& key, std::shared_ptr<Value> value)
             }
 
             offset = keyIndex.left;
-        } else if (index_key < key) {
+        }
+        else if (index_key < key) {
             if (keyIndex.right == 0) {
                 return false;
             }
 
             offset = keyIndex.right;
-        } else {
+        }
+        else {
             break;
         }
     }
@@ -90,7 +92,7 @@ bool SSTable::get(const Key& key, std::shared_ptr<Value> value)
     return true;
 }
 
-void SSTable::write(const MemTable& memtable)
+void SSTable::write(MemTable& memtable)
 {
     auto keys = memtable.keys();
 
@@ -159,7 +161,8 @@ void write_header(const std::string& file_path, const SSTableHeader& header) {
             std::cerr << "Error writing header to file" << std::endl;
             throw std::runtime_error("Error writing header to file");
         }
-    } else {
+    }
+    else {
         std::cerr << "Error opening file" << std::endl;
         throw std::runtime_error("Error opening file");
     }
@@ -168,7 +171,7 @@ void write_header(const std::string& file_path, const SSTableHeader& header) {
 void write_index(
     std::ofstream& index_file,
     std::uint32_t& index_offset,
-    const MemTable& memtable,
+    MemTable& memtable,
     const std::vector<std::shared_ptr<Key>>& keys,
     const std::vector<std::uint32_t>& data_offsets,
     int start,
@@ -178,7 +181,7 @@ void write_index(
         return;
     }
 
-    if(start == end) {
+    if (start == end) {
         //write index
         std::unique_ptr<SSTableIndex> keyIndex = std::make_unique<SSTableIndex>();
 
@@ -195,7 +198,7 @@ void write_index(
     int mid = start + (end - start) / 2;
 
     //write left and right child
-    write_index(index_file, index_offset, memtable, keys, data_offsets, start, mid-1);
+    write_index(index_file, index_offset, memtable, keys, data_offsets, start, mid - 1);
 
     write_index(index_file, index_offset, memtable, keys, data_offsets, mid + 1, end);
 
@@ -216,7 +219,7 @@ void write_index(
     write_index(index_file, index_offset, std::move(keyIndex), keys[mid]);
 }
 
-std::vector<uint32_t> write_data(std::ofstream& data_file, std::uint32_t& data_offset, const MemTable& memtable, const std::vector<std::shared_ptr<Key>>& keys) {
+std::vector<uint32_t> write_data(std::ofstream& data_file, std::uint32_t& data_offset, MemTable& memtable, const std::vector<std::shared_ptr<Key>>& keys) {
     //write value to data file at data_offset
     if (!data_file) {
         throw std::runtime_error("Error opening data file");

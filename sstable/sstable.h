@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <math.h>
 
@@ -56,7 +58,7 @@ public:
 
     SSTable(std::string dirname, int level, int index);
 
-    void write(const MemTable& memtable);
+    void write(MemTable& memtable);
 
     //Find the value for the given key
     bool get(const Key& key, std::shared_ptr<Value> value);
